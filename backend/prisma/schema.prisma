@@ -20,29 +20,29 @@ model User{
   password String 
 
 
-  Balence UserBalence[]
+  Balence UserBalence?
 }
 model Merchant{
   id Int @default(autoincrement()) @unique
   name String 
   email String @unique
   password String 
-  Balence MerchantBalence[]
+  Balence MerchantBalence?
 
 }
 
 model UserBalence {
   id Int @id @default(autoincrement())
   userId Int @unique
-  amount Int
-  locked Int
+  amount Int @default(0)
+  locked Int @default(0)
   user  User @relation(fields: [userId],references: [id])
 }
 model MerchantBalence {
   id Int @id @default(autoincrement())
   userId Int @unique
-  amount Int
-  locked Int
+  amount Int @default(0)
+  locked Int @default(0)
   user  Merchant @relation(fields: [userId],references: [id])
 }
 enum OnRampStatus {

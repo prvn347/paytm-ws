@@ -1,11 +1,11 @@
-import { user } from "../types/user";
+import { userSignin, userSignup } from "../types/user";
 import bcrypt from "bcryptjs";
 
 import { PrismaClient } from "@prisma/client";
 import { generateToken, generateTokenMerchant } from "../utils/jwtUtils";
 const prisma = new PrismaClient();
 export class merchantService {
-  async createMerchantUser(userData: user) {
+  async createMerchantUser(userData: userSignup) {
     try {
       const hashedPassword = await bcrypt.hashSync(userData.password, 10);
       const user = await prisma.merchant.create({
@@ -24,7 +24,7 @@ export class merchantService {
       return new Error("error while db user creation");
     }
   }
-  async findMerchantUser(userData: user) {
+  async findMerchantUser(userData: userSignin) {
     try {
       const user = await prisma.merchant.findFirst({
         where: {

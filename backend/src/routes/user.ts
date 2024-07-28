@@ -1,7 +1,9 @@
-import express from "express";
+import express, { Response } from "express";
 import { cookieConfig } from "../config/cookieconfig";
 import { userController } from "../controllers/user";
 import { verifyToken } from "../utils/jwtUtils";
+import { AuthRequest, adminUser } from "../middleware/userAuthMiddleware";
+
 const router = express();
 
 const userControllers = new userController();
@@ -44,6 +46,37 @@ router.post("/signup", async (req, res) => {
     const { user } = result;
     return res.status(201).json({
       user: "user created",
+    });
+  } catch (error) {
+    res.status(403).json({ error: error });
+  }
+});
+
+router.post("/transfer", adminUser, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user;
+    const result = await userControllers.transfer(req.body, userId);
+
+    if (result instanceof Error) {
+      return res.status(403).json({ error: "Error while tranferring amount" });
+    }
+    return res.json({
+      tranfer: result,
+    });
+  } catch (error) {
+    res.status(403).json({ error: error });
+  }
+});
+router.post("/onramp", adminUser, async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user;
+    const result = await userControllers.onramp(req.body, userId);
+
+    if (result instanceof Error) {
+      return res.status(403).json({ error: "Error while onramping" });
+    }
+    return res.status(201).json({
+      message: result,
     });
   } catch (error) {
     res.status(403).json({ error: error });
