@@ -8,13 +8,21 @@ export class merchantService {
   async createMerchantUser(userData: userSignup) {
     try {
       const hashedPassword = await bcrypt.hashSync(userData.password, 10);
-      const user = await prisma.merchant.create({
-        data: {
-          name: userData.name,
+      const user = await prisma.$transaction(async (tx) => {
+        const user = await tx.merchant.create({
+          data: {
+            name: userData.name,
 
-          email: userData.email,
-          password: hashedPassword,
-        },
+            email: userData.email,
+            password: hashedPassword,
+          },
+        });
+        await tx.merchantBalence.create({
+          data: {
+            userId: user.id,
+          },
+        });
+        return user;
       });
 
       const token = generateTokenMerchant(user.id);

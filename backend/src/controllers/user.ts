@@ -21,6 +21,7 @@ export class userController {
   }
   async onramp(onrampData: onrampType, userId: number) {
     try {
+      console.log("reached onramp controller with" + onrampData);
       return await this.userService.onramp(onrampData, userId);
     } catch (error) {
       return new Error("error while onramping.");

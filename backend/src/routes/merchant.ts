@@ -1,7 +1,7 @@
 import express from "express";
 import { cookieConfig } from "../config/cookieconfig";
 import { userController } from "../controllers/user";
-import { verifyToken } from "../utils/jwtUtils";
+import { verifyToken, verifyTokenMerchant } from "../utils/jwtUtils";
 import { merchantController } from "../controllers/merchant";
 const router = express();
 
@@ -22,7 +22,7 @@ router.post("/signin", async (req, res) => {
       return res.status(201).json({ user });
     } else {
       const token = cookies.split("=")[1];
-      const verifiedUser = verifyToken(token);
+      const verifiedUser = verifyTokenMerchant(token);
       return res.status(201).json({ user: verifiedUser });
     }
   } catch (error) {

@@ -9,13 +9,21 @@ export class userservice {
   async createUser(userData: userSignup) {
     try {
       const hashedPassword = await bcrypt.hashSync(userData.password, 10);
-      const user = await prisma.user.create({
-        data: {
-          name: userData.name,
+      const user = await prisma.$transaction(async (tx) => {
+        const user = await tx.user.create({
+          data: {
+            name: userData.name,
 
-          email: userData.email,
-          password: hashedPassword,
-        },
+            email: userData.email,
+            password: hashedPassword,
+          },
+        });
+        await tx.userBalence.create({
+          data: {
+            userId: user.id,
+          },
+        });
+        return user;
       });
 
       const token = generateToken(user.id);
@@ -106,6 +114,8 @@ export class userservice {
   // create a webhook server for onramping
   async onramp(onrampData: onrampType, userId: number) {
     try {
+      console.log("reached service of onramp");
+
       const resp = await prisma.userBalence.update({
         where: {
           userId: userId,
@@ -116,8 +126,10 @@ export class userservice {
           },
         },
       });
+      console.log(resp);
       return resp;
     } catch (error) {
+      console.log(error);
       throw new Error("error while onraming with the bank");
     }
   }

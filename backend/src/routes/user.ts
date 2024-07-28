@@ -55,7 +55,7 @@ router.post("/signup", async (req, res) => {
 router.post("/transfer", adminUser, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user;
-    const result = await userControllers.transfer(req.body, userId);
+    const result = await userControllers.transfer(req.body, parseInt(userId));
 
     if (result instanceof Error) {
       return res.status(403).json({ error: "Error while tranferring amount" });
@@ -70,7 +70,8 @@ router.post("/transfer", adminUser, async (req: AuthRequest, res: Response) => {
 router.post("/onramp", adminUser, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user;
-    const result = await userControllers.onramp(req.body, userId);
+    console.log(userId);
+    const result = await userControllers.onramp(req.body, parseInt(userId));
 
     if (result instanceof Error) {
       return res.status(403).json({ error: "Error while onramping" });
